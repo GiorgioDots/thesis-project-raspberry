@@ -12,14 +12,16 @@ import requests
 import uuid
 import os
 
-with open('raspi_config.json', 'r') as f:
+time.sleep(60)
+
+with open('/home/pi/thesis-project-raspberry/raspi_config.json', 'r') as f:
 	config = json.load(f)
 	raspi_id = config["raspiId"]
 	url = config["url"]+"/events/"+raspi_id
 	
 
 def sendEvent(frame):
-	img_path = "./tmp/%s.png" % uuid.uuid4()
+	img_path = "/home/pi/thesis-project-raspberry/tmp/%s.png" % uuid.uuid4()
 	print("Sending new event: %s..." %img_path)
 	cv2.imwrite(img_path, frame)
 	image = { "image": open(img_path, "rb") }
@@ -54,7 +56,7 @@ net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0, usePiCamera=True, resolution=(1920,1080)).start()
 time.sleep(2.0)
-fps = FPS().start()
+# fps = FPS().start()
 
 # loop over the frames from the video stream
 while True:
@@ -99,15 +101,15 @@ while True:
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
     # show the output frame
-	cv2.imshow("Frame", frame)
+	# cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
 	# if the `q` key was pressed, break from the loop
-	if key == ord("q"):
-		break
+	# if key == ord("q"):
+	# 	break
 	# update the FPS counter
-	fps.update()
+	# fps.update()
 
-fps.stop()
+# fps.stop()
 print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
 print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 # do a bit of cleanup
