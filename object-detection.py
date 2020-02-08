@@ -27,8 +27,8 @@ def sendEvent(frame):
 	image = { "image": open(img_path, "rb") }
 	response = requests.post(url, files = image)
 	print(response.text)
-	# if os.path.exists(img_path):
-  	# 	os.remove(img_path)
+	if os.path.exists(img_path):
+  		os.remove(img_path)
 
 
 ap = argparse.ArgumentParser()
