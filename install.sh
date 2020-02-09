@@ -37,6 +37,7 @@ sudo find /usr/local/lib -type f -name "cv2.*.so" -exec sh -c 'x="{}"; echo mv "
 
 echo "OpenCV is successfully installed"
 
-cd /home/pi/thesis-project-raspberry/#change pi with your user folder name
+#change pi with your user folder name
+cd /home/pi/thesis-project-raspberry/
 
 pip install imutils
