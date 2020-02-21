@@ -14,13 +14,19 @@ import os
 
 time.sleep(60)
 
-with open('/home/pi/thesis-project-raspberry/raspi_config.json', 'r') as f:
-	config = json.load(f)
-	raspi_id = config["raspiId"]
-	url = config["url"]+"/events/"+raspi_id
-	
+backendUrl = "https://raspiface-backend.herokuapp.com"
+
+def getConfig():
+	with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
+		config = json.load(f)
+		raspiId = config["raspiId"]
+		resolution = config["resolution"]
+		confidence = config["confidence"]
+		url = backendUrl+"/events/"+raspiId
+
 
 def sendEvent(frame):
+	getConfig()
 	img_path = "/home/pi/thesis-project-raspberry/tmp/%s.png" % uuid.uuid4()
 	print("Sending new event: %s..." %img_path)
 	cv2.imwrite(img_path, frame)
@@ -30,6 +36,8 @@ def sendEvent(frame):
 	if os.path.exists(img_path):
   		os.remove(img_path)
 
+
+getConfig()
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True,
