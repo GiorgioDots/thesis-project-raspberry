@@ -1,5 +1,5 @@
 #to execute the function use this command:
-#sudo python /home/pi/thesis-project-raspberry/object-detection.py --prototxt /home/pi/thesis-project-raspberry/MobileNetSSD_deploy.prototxt.txt --model /home/pi/thesis-project-raspberry/MobileNetSSD_deploy.caffemodel --confidence 0.5 & > /home/pi/thesis-project-raspberry/logs.log 2>&1
+#sudo python /home/pi/thesis-project-raspberry/object-detection.py --prototxt /home/pi/thesis-project-raspberry/MobileNetSSD_deploy.prototxt.txt --model /home/pi/thesis-project-raspberry/MobileNetSSD_deploy.caffemodel & > /home/pi/thesis-project-raspberry/logs.log 2>&1
 
 #change pi with your user folder name
 cd /home/pi/

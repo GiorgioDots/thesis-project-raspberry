@@ -16,13 +16,12 @@ time.sleep(60)
 
 backendUrl = "https://raspiface-backend.herokuapp.com"
 
-def getConfig():
-	with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
-		config = json.load(f)
-		raspiId = config["raspiId"]
-		resolution = config["resolution"].split("x")
-		confidence = config["confidence"]/100
-		url = backendUrl+"/events/"+raspiId
+with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
+	config = json.load(f)
+	raspiId = config["raspiId"]
+	resolution = config["resolution"].split("x")
+	confidence = config["confidence"]/100
+	url = backendUrl+"/events/"+raspiId
 
 
 def sendEvent(frame):
