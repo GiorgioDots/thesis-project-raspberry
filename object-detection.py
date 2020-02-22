@@ -20,8 +20,8 @@ def getConfig():
 	with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
 		config = json.load(f)
 		raspiId = config["raspiId"]
-		resolution = config["resolution"]
-		confidence = config["confidence"]
+		resolution = config["resolution"].split("x")
+		confidence = config["confidence"]/100
 		url = backendUrl+"/events/"+raspiId
 
 
@@ -44,7 +44,7 @@ ap.add_argument("-p", "--prototxt", required=True,
 	help="path to Caffe 'deploy' prototxt file")
 ap.add_argument("-m", "--model", required=True,
 	help="path to Caffe pre-trained model")
-ap.add_argument("-c", "--confidence", type=float, default=0.2,
+ap.add_argument("-c", "--confidence", type=float, default=confidence,
 	help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
 
@@ -62,7 +62,7 @@ net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 # initialize the video stream, allow the cammera sensor to warmup,
 # and initialize the FPS counter
 print("[INFO] starting video stream...")
-vs = VideoStream(src=0, usePiCamera=True, resolution=(1920,1080)).start()
+vs = VideoStream(src=0, usePiCamera=True, resolution=(resolution[0],resolution[1])).start()
 time.sleep(2.0)
 # fps = FPS().start()
 
