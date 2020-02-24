@@ -12,7 +12,7 @@ import requests
 import uuid
 import os
 
-time.sleep(60)
+time.sleep(45)
 
 backendUrl = "https://raspiface-backend.herokuapp.com"
 
@@ -25,7 +25,6 @@ with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
 
 
 def sendEvent(frame):
-	getConfig()
 	img_path = "/home/pi/thesis-project-raspberry/tmp/%s.png" % uuid.uuid4()
 	print("Sending new event: %s..." %img_path)
 	cv2.imwrite(img_path, frame)
@@ -35,8 +34,6 @@ def sendEvent(frame):
 	if os.path.exists(img_path):
   		os.remove(img_path)
 
-
-getConfig()
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True,
@@ -61,7 +58,8 @@ net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 # initialize the video stream, allow the cammera sensor to warmup,
 # and initialize the FPS counter
 print("[INFO] starting video stream...")
-vs = VideoStream(src=0, usePiCamera=True, resolution=(resolution[0],resolution[1])).start()
+print(resolution[0] + " - " + resolution[1])
+vs = VideoStream(src=0, usePiCamera=True, resolution=(int(resolution[0]),int(resolution[1]))).start()
 time.sleep(2.0)
 # fps = FPS().start()
 
