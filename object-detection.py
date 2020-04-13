@@ -13,7 +13,7 @@ import uuid
 import os
 import sys
 
-#time.sleep(45)
+time.sleep(10)
 
 backendUrl = "https://raspiface-backend.herokuapp.com"
 
