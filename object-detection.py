@@ -11,17 +11,20 @@ import json
 import requests
 import uuid
 import os
+import sys
 
 time.sleep(45)
 
 backendUrl = "https://raspiface-backend.herokuapp.com"
 
-with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
+with open('../thesis-project-raspberry-ws-1/raspi-config.json', 'r') as f:
 	config = json.load(f)
 	raspiId = config["raspiId"]
 	resolution = config["resolution"].split("x")
 	confidence = config["confidence"]/100
-	url = backendUrl+"/events/"+raspiId
+	token = config["token"]
+	isActive = config["isActive"]
+	url = backendUrl+"/events/"
 
 
 def sendEvent(frame):
@@ -29,10 +32,14 @@ def sendEvent(frame):
 	print("Sending new event: %s..." %img_path)
 	cv2.imwrite(img_path, frame)
 	image = { "image": open(img_path, "rb") }
-	response = requests.post(url, files = image)
+	response = requests.post(url, files = image, headers = { 'Authorization': 'Bearer {token}'  })
 	print(response.text)
 	if os.path.exists(img_path):
   		os.remove(img_path)
+
+if not isActive:
+	print('Raspberry not active, exiting')
+	sys.exit()
 
 
 ap = argparse.ArgumentParser()
