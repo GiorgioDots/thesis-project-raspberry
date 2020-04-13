@@ -13,11 +13,11 @@ import uuid
 import os
 import sys
 
-time.sleep(45)
+#time.sleep(45)
 
 backendUrl = "https://raspiface-backend.herokuapp.com"
 
-with open('/home/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
+with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
 	config = json.load(f)
 	raspiId = config["raspiId"]
 	resolution = config["resolution"].split("x")
@@ -27,12 +27,14 @@ with open('/home/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
 	url = backendUrl+"/events/"
 
 
-def sendEvent(frame):
+def sendEvent():
 	img_path = "/home/pi/thesis-project-raspberry/tmp/%s.png" % uuid.uuid4()
 	print("Sending new event: %s..." %img_path)
+	frame = vs.read()
 	cv2.imwrite(img_path, frame)
-	image = { "image": open(img_path, "rb") }
-	response = requests.post(url, files = image, headers = { 'Authorization': 'Bearer {token}'  })
+	#image = { "image": open(img_path, "rb") }
+	image = { "image": (img_path, open(img_path,"rb"), 'image/png') }
+	response = requests.post(url, files = image, headers = { 'Authorization': 'Bearer ' + token  })
 	print(response.text)
 	if os.path.exists(img_path):
   		os.remove(img_path)
@@ -76,7 +78,6 @@ while True:
 	# to have a maximum width of 400 pixels
 	frame = vs.read()
 	# frame = adjust_brightness_contrast(frame, contrast=0, brightness=60)
-	realFrame = frame
 	frame = imutils.resize(frame, width=400)
 	# grab the frame dimensions and convert it to a blob
 	(h, w) = frame.shape[:2]
@@ -100,7 +101,8 @@ while True:
 			# the bounding box for the object
 			idx = int(detections[0, 0, i, 1])
 			if CLASSES[idx] == "person":
-				sendEvent(realFrame)
+				sendEvent()
+				time.sleep(2)
 			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 			(startX, startY, endX, endY) = box.astype("int")
 			# draw the prediction on the frame
