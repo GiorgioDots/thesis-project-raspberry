@@ -17,7 +17,7 @@ time.sleep(45)
 
 backendUrl = "https://raspiface-backend.herokuapp.com"
 
-with open('../thesis-project-raspberry-ws-1/raspi-config.json', 'r') as f:
+with open('/home/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
 	config = json.load(f)
 	raspiId = config["raspiId"]
 	resolution = config["resolution"].split("x")
