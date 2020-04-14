@@ -41,7 +41,7 @@ class LiveImagesSender(Thread):
 			self.cv2.imwrite(img_path, frame)
 			#image = { "image": open(img_path, "rb") }
 			image = { "image": (img_path, open(img_path,"rb"), 'image/png') }
-			response = requests.post(backendUrl+"/raspberry/last-image", files = image, headers = { 'Authorization': 'Bearer ' + token  })
+			response = requests.put(backendUrl+"/raspberry/last-image", files = image, headers = { 'Authorization': 'Bearer ' + token  })
 			print(response.text)
 			if os.path.exists(img_path):
 					os.remove(img_path)
