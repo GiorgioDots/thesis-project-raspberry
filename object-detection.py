@@ -1,6 +1,7 @@
 from imutils.video import VideoStream
 from imutils.video import FPS
 from imutils import adjust_brightness_contrast
+from threading import Thread
 
 import numpy as np
 import argparse
@@ -26,6 +27,22 @@ with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
 	isActive = config["isActive"]
 	url = backendUrl+"/events/"
 
+class LiveImagesSender(Thread):
+	def __init__(self):
+		Thread.__init__(self)
+	def run(self):
+		while(True):
+			time.sleep(60)
+			img_path = "/home/pi/thesis-project-raspberry/tmp/%s.png" % uuid.uuid4()
+			print("Sending live image: %s..." %img_path)
+			frame = vs.read()
+			cv2.imwrite(img_path, frame)
+			#image = { "image": open(img_path, "rb") }
+			image = { "image": (img_path, open(img_path,"rb"), 'image/png') }
+			response = requests.post(backendUrl+"/raspberry/last-image", files = image, headers = { 'Authorization': 'Bearer ' + token  })
+			print(response.text)
+			if os.path.exists(img_path):
+					os.remove(img_path)
 
 def sendEvent():
 	img_path = "/home/pi/thesis-project-raspberry/tmp/%s.png" % uuid.uuid4()
@@ -40,7 +57,7 @@ def sendEvent():
   		os.remove(img_path)
 
 if not isActive:
-	print('Raspberry not active, exiting')
+	print('Raspberry not active, exiting..')
 	sys.exit()
 
 
@@ -71,6 +88,9 @@ print(resolution[0] + " - " + resolution[1])
 vs = VideoStream(src=0, usePiCamera=True, resolution=(int(resolution[0]),int(resolution[1]))).start()
 time.sleep(2.0)
 # fps = FPS().start()
+
+liveImageSender = LiveImagesSender()
+liveImageSender.run()
 
 # loop over the frames from the video stream
 while True:
