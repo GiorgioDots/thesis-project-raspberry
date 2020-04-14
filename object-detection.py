@@ -28,15 +28,17 @@ with open('/home/pi/thesis-project-raspberry-ws/raspi-config.json', 'r') as f:
 	url = backendUrl+"/events/"
 
 class LiveImagesSender(Thread):
-	def __init__(self):
+	def __init__(self, cv2, vs):
 		Thread.__init__(self)
+		self.cv2 = cv2
+		self.vs = vs
 	def run(self):
 		while(True):
 			time.sleep(60)
 			img_path = "/home/pi/thesis-project-raspberry/tmp/%s.png" % uuid.uuid4()
 			print("Sending live image: %s..." %img_path)
-			frame = vs.read()
-			cv2.imwrite(img_path, frame)
+			frame = self.vs.read()
+			self.cv2.imwrite(img_path, frame)
 			#image = { "image": open(img_path, "rb") }
 			image = { "image": (img_path, open(img_path,"rb"), 'image/png') }
 			response = requests.post(backendUrl+"/raspberry/last-image", files = image, headers = { 'Authorization': 'Bearer ' + token  })
@@ -55,9 +57,6 @@ def sendEvent():
 	print(response.text)
 	if os.path.exists(img_path):
   		os.remove(img_path)
-
-liveImageSender = LiveImagesSender()
-liveImageSender.run()
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True,
@@ -84,6 +83,10 @@ net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 print("[INFO] starting video stream...")
 print(resolution[0] + " - " + resolution[1])
 vs = VideoStream(src=0, usePiCamera=True, resolution=(int(resolution[0]),int(resolution[1]))).start()
+
+liveImageSender = LiveImagesSender(cv2, vs)
+liveImageSender.run()
+
 time.sleep(2.0)
 # fps = FPS().start()
 
